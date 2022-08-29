@@ -1,0 +1,75 @@
+{
+  "name": "@jeshix/esbuild-plugin-nodemon",
+  "version": "0.1.0",
+  "description": "An esbuild plugin for watch file changes via nodemon",
+  "keywords": [
+    "esbuild",
+    "plugin",
+    "nodemon",
+    "watch"
+  ],
+  "homepage": "https://github.com/jeshix/esbuild-plugin-nodemon#readme",
+  "bugs": {
+    "url": "https://github.com/jeshix/esbuild-plugin-nodemon/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Jeshi",
+    "email": "inbox@jeshi.moe",
+    "url": "https://jeshi.moe/"
+  },
+  "contributors": [
+    {
+      "name": "Jeshi",
+      "email": "inbox@jeshi.moe",
+      "url": "https://jeshi.moe/"
+    }
+  ],
+  "type": "module",
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.mjs",
+    "types": "./dist/index.d.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeshix/esbuild-plugin-nodemon.git"
+  },
+  "scripts": {
+    "build": "npm run build:tsd && npm run build:cjs && npm run build:esm",
+    "build:tsd": "tsc --emitDeclarationOnly",
+    "build:cjs": "esbuild src/index.ts --minify --platform=node --target=node16 --outfile=dist/index.cjs --format=cjs",
+    "build:esm": "esbuild src/index.ts --minify --platform=node --target=node16 --outfile=dist/index.mjs --format=esm",
+    "prebuild": "npm run lint && rimraf dist",
+    "lint": "tsc --noEmit && eslint src --max-warnings 0",
+    "prepare": "husky install",
+    "test": "node test"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.13",
+    "@types/nodemon": "^1.19.2",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
+    "esbuild": "^0.15.5",
+    "eslint": "^8.23.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "nodemon": "^2.0.19",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.8.2"
+  },
+  "peerDependencies": {
+    "esbuild": "^0.15.5",
+    "nodemon": "^2.0.19"
+  }
+}
