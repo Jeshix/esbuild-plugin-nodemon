@@ -1,6 +1,6 @@
 {
   "name": "@jeshix/esbuild-plugin-nodemon",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "An esbuild plugin for watch file changes via nodemon",
   "keywords": [
     "esbuild",

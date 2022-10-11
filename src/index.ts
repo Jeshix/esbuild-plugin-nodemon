@@ -38,7 +38,7 @@ function pluginNodemon(pluginSettings: PluginSettings = {}): Plugin {
       }
 
       if (!nodemonSettings.script) {
-        tempDirPath = resolve(pluginPath(), '..', 'temp');
+        tempDirPath = resolve(pluginPath(), '..', '..', 'esbuild-plugin-nodemon-temp');
         nodemonSettings.script = resolve(tempDirPath, 'index.js');
         nodemonSettings.watch = nodemonSettings.watch
           ? [...nodemonSettings.watch, nodemonSettings.script]
