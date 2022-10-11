@@ -1,9 +1,10 @@
 {
   "name": "@jeshix/esbuild-plugin-nodemon",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "description": "An esbuild plugin for watch file changes via nodemon",
   "keywords": [
     "esbuild",
+    "esbuild-plugin",
     "plugin",
     "nodemon",
     "watch"
@@ -42,21 +43,19 @@
     "url": "https://github.com/jeshix/esbuild-plugin-nodemon.git"
   },
   "scripts": {
-    "build": "npm run build:tsd && npm run build:cjs && npm run build:esm",
-    "build:tsd": "tsc --emitDeclarationOnly",
-    "build:cjs": "esbuild src/index.ts --minify --platform=node --target=node16 --outfile=dist/index.cjs --format=cjs",
-    "build:esm": "esbuild src/index.ts --minify --platform=node --target=node16 --outfile=dist/index.mjs --format=esm",
-    "prebuild": "npm run lint && rimraf dist",
+    "prebuild": "rimraf dist && npm run lint",
+    "build": "node build && tsc --emitDeclarationOnly",
     "lint": "tsc --noEmit && eslint src --max-warnings 0",
     "prepare": "husky install",
     "test": "node test"
   },
   "devDependencies": {
-    "@types/node": "^18.7.13",
+    "@types/node": "^18.8.4",
     "@types/nodemon": "^1.19.2",
-    "@typescript-eslint/eslint-plugin": "^5.35.1",
-    "@typescript-eslint/parser": "^5.35.1",
-    "esbuild": "^0.15.5",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
+    "esbuild": "^0.15.10",
+    "esbuild-plugin-node-externals": "^0.3.0",
     "eslint": "^8.23.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -66,10 +65,10 @@
     "lint-staged": "^13.0.3",
     "nodemon": "^2.0.19",
     "rimraf": "^3.0.2",
-    "typescript": "^4.8.2"
+    "typescript": "^4.8.4"
   },
   "peerDependencies": {
-    "esbuild": "^0.15.5",
+    "esbuild": "^0.15.10",
     "nodemon": "^2.0.19"
   }
 }

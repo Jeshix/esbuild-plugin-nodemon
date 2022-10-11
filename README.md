@@ -5,22 +5,22 @@ An [esbuild](https://esbuild.github.io/) plugin for watch file changes via [node
 ## Install
 
 ```console
-npm install --save-dev @jeshix/esbuild-plugin-nodemon
+npm install --save-dev nodemon @jeshix/esbuild-plugin-nodemon
 ```
 
 or
 
 ```console
-yarn add --dev @jeshix/esbuild-plugin-nodemon
+yarn add --dev nodemon @jeshix/esbuild-plugin-nodemon
 ```
 
 ## Usage example
 
 ```js
-const esbuild = require("esbuild");
+const { build } = require("esbuild");
 const { pluginNodemon } = require("@jeshix/esbuild-plugin-nodemon");
 
-esbuild.build({
+build({
   entryPoints: ["app.js"],
   watch: true,
   plugins: [
@@ -34,15 +34,14 @@ esbuild.build({
 > **Note**
 >
 > Plugin works only in `watch` mode
+> Plugin will set `bundle` option to `true` and store output files in its directory, if no `nodemon.script` path will be provided
 
 ## Configuration
 
-| Option         | Description                                                   | Type      | Default value | Notes                                                                                                                   |
-| -------------- | ------------------------------------------------------------- | --------- | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `tempDir`      | Path to your temporary directory, where bundle will be stored | `string`  | `.watch`      | Can be absolute or relative to your project root                                                                        |
-| `clearConsole` | Clear console before rebuild                                  | `boolean` | `true`        |                                                                                                                         |
-| `quietMode`    | Start nodemon in quiet mode                                   | `boolean` | `false`       |                                                                                                                         |
-| `deleteOnExit` | Delete temporary directory on process exit                    | `boolean` | `true`        | Temporary directory must not contain any files, except esbuild output, otherwise, this option will be forced to `false` |
+| Option         | Description                        | Type      | Default value |
+| -------------- | ---------------------------------- | --------- | ------------- |
+| `clearConsole` | Clear console before every rebuild | `Boolean` | `true`        |
+| `nodemon`      | Nodemon settings                   | `Object`  | `{}`          |
 
 ## License
 
