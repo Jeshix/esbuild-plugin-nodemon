@@ -1,48 +1,52 @@
-import { existsSync, readdirSync, rmSync } from 'fs';
-import { resolve, join } from 'path';
+import { resolve } from 'path';
 import nodemon from 'nodemon';
 
 import type { Plugin } from 'esbuild';
+import type { Settings } from 'nodemon';
 
-interface Config {
-  tempDir?: string;
+export interface PluginSettings {
   clearConsole?: boolean;
-  quietMode?: boolean;
-  deleteOnExit?: boolean;
+  nodemon?: Settings;
 }
 
-function isDirEmpty(path: string) {
-  if (existsSync(path)) {
-    const files = readdirSync(path);
+function pluginPath(): string {
+  const { url } = import.meta;
 
-    if (files.length > 1 || (files.length === 1 && files[0] !== 'index.js')) {
-      return false;
-    }
+  if (!url) {
+    return __dirname;
   }
 
-  return true;
+  return new URL(url).pathname
+    .split('/')
+    .filter((element, index, array) => !element.match(/^.*:/) && index < array.length - 1)
+    .join('/');
 }
 
-function pluginNodemon(config: Config = {}): Plugin {
-  const tempDir = resolve(process.cwd(), config.tempDir ?? '.watch');
-  const tempFile = join(tempDir, 'index.js');
-  const clearConsole = config.clearConsole ?? true;
-  const quietMode = config.quietMode ?? false;
-  const deleteOnExit = config.deleteOnExit ?? true;
-  let isRunning = false;
+function pluginNodemon(pluginSettings: PluginSettings = {}): Plugin {
+  const clearConsole = pluginSettings.clearConsole ?? true;
+  const nodemonSettings = JSON.parse(JSON.stringify(pluginSettings.nodemon ?? {})) as Settings;
+  let tempDirPath: string;
+  let isRunning: boolean;
 
   return {
     name: 'esbuild-plugin-nodemon',
     setup(build) {
+      const { initialOptions } = build;
+
       if (!build.initialOptions.watch) {
         return;
       }
 
-      const options = build.initialOptions;
-
-      options.bundle = true;
-      options.outfile = tempFile;
-      delete options.outdir;
+      if (!nodemonSettings.script) {
+        tempDirPath = resolve(pluginPath(), '..', 'temp');
+        nodemonSettings.script = resolve(tempDirPath, 'index.js');
+        nodemonSettings.watch = nodemonSettings.watch
+          ? [...nodemonSettings.watch, nodemonSettings.script]
+          : [nodemonSettings.script];
+        initialOptions.bundle = true;
+        initialOptions.outfile = nodemonSettings.script;
+        delete initialOptions.outdir;
+      }
 
       if (clearConsole) {
         build.onStart(() => {
@@ -59,38 +63,16 @@ function pluginNodemon(config: Config = {}): Plugin {
 
         isRunning = true;
 
-        nodemon({ script: tempFile, watch: [tempFile] });
+        nodemon(nodemonSettings);
 
-        if (!quietMode) {
-          nodemon.on('log', ({ colour }) => {
-            global.console.log(colour);
-          });
-        }
+        nodemon.on('log', ({ colour }) => {
+          global.console.log(colour);
+        });
       });
 
-      if (!deleteOnExit) {
-        return;
-      }
-
-      if (isDirEmpty(tempDir)) {
-        process.once('exit', () => {
-          if (existsSync(tempDir)) {
-            rmSync(tempDir, { recursive: true });
-          }
-        });
-
-        process.once('SIGINT', () => {
-          process.exit(0);
-        });
-      } else {
-        global.console.log(
-          '\n',
-          '\u001B[93m[WARNING]\u001B[39m',
-          '\u001B[95m[esbuild-plugin-nodemon]\u001B[39m',
-          'Temporary directory is not empty and will not be deleted on process exit',
-          '\n',
-        );
-      }
+      process.once('SIGINT', () => {
+        process.exit(0);
+      });
     },
   };
 }

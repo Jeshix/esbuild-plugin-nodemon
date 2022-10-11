@@ -1,6 +1,9 @@
 {
   "root": true,
-  "ignorePatterns": ["test/**/*"],
+  "ignorePatterns": ["test/**/*", "esbuild.js"],
+  "env": {
+    "node": true
+  },
   "plugins": ["@typescript-eslint"],
   "extends": [
     "airbnb-base",
@@ -10,17 +13,6 @@
     "plugin:@typescript-eslint/strict",
     "prettier"
   ],
-  "overrides": [
-    {
-      "files": ["src/index.ts"],
-      "rules": {
-        "import/prefer-default-export": "off"
-      }
-    }
-  ],
-  "env": {
-    "node": true
-  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
